@@ -2,7 +2,7 @@
 
 *void	\*cantalloc(size_t size)*
 
-Allocates size bytes of memory with malloc(),
+Allocates size bytes of memory with malloc() and
 saves the pointer in a static linked list, before
 returning it.
 Returns NULL if malloc fails.
