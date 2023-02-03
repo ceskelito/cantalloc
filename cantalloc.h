@@ -15,6 +15,7 @@ typedef struct s_alloc
 
 /* funcs */
 void	*cantalloc(size_t size);
+void	*ccantalloc(size_t size, size_t count);
 void	cantalloc_clean(void);
 
 #endif

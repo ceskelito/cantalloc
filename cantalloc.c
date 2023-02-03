@@ -10,6 +10,20 @@ static t_alloc	*new_node(void	*ptr)
 	return (node);
 }
 
+static void	clean_garbage_list(t_alloc *head)
+{
+	t_alloc	*tmp;
+
+	tmp = head;
+	while (tmp)
+	{
+		head = head->next;
+		free(tmp->ptr);
+		free(tmp);
+		tmp = head;
+	}
+}
+
 static void	*cantalloc_handler(size_t size, int mode)
 {
 	static t_alloc	*garbage_head;
@@ -35,16 +49,7 @@ static void	*cantalloc_handler(size_t size, int mode)
 	}
 	else if (mode == CLEAN)
 	{
-		t_alloc	*tmp;
-
-		tmp = garbage_head;
-		while (tmp)
-		{
-			garbage_head = garbage_head->next;
-			free(tmp->ptr);
-			free(tmp);
-			tmp = garbage_head;
-		}
+		clean_garbage_list(garbage_head);
 	}
 	return (NULL);
 }
@@ -52,6 +57,23 @@ static void	*cantalloc_handler(size_t size, int mode)
 void	*cantalloc(size_t size)
 {
 	return (cantalloc_handler(size, NEW));
+}
+
+void	*ccantalloc(size_t size, size_t count)
+{
+	char	*new_ptr;
+	size_t	i;
+
+	new_ptr = cantalloc_handler(size * count, NEW);
+	if (!new_ptr)
+		return (NULL);
+	i = 0;
+	while (i < size * count)
+	{
+		new_ptr[i] = 0;
+		++i;
+	}
+	return ((void *)new_ptr);
 }
 
 void	cantalloc_clean(void)
