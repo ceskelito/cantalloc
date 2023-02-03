@@ -17,4 +17,4 @@ Returns NULL if malloc fails.
 *void	cantalloc_clean(void)*
 
 Frees all the memory previously allocated by cantalloc
-ad ccantalloc.
+and ccantalloc.
