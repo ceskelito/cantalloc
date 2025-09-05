@@ -48,9 +48,7 @@ static void	*cantalloc_handler(size_t size, int mode)
 		return (new_ptr);
 	}
 	else if (mode == CLEAN)
-	{
 		clean_garbage_list(garbage_head);
-	}
 	return (NULL);
 }
 
