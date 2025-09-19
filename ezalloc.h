@@ -10,7 +10,7 @@
 /* garbage collector node */
 typedef struct s_alloc
 {
-	void		*ptr;
+	void			*ptr;
 	struct s_alloc	*next;
 }	t_alloc;
 

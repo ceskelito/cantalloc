@@ -26,21 +26,20 @@ static void	clean_garbage_list(t_alloc *head)
 
 static void	clean_garbage_node(t_alloc **head, void *target_to_free)
 {
-	t_alloc *curr;
+	t_alloc	*curr;
 	t_alloc	*prev;
 
 	if (target_to_free == NULL)
 		return ;
 	curr = *head;
 	prev = NULL;
-
 	while (curr != NULL)
 	{
-		if (curr->ptr == target_to_free) 
+		if (curr->ptr == target_to_free)
 		{
 			if (curr == *head)
 				*head = curr->next;
-			else 
+			else
 				prev->next = curr->next;
 			free(curr->ptr);
 			free(curr);
@@ -60,8 +59,6 @@ static void	*ezalloc_handler(size_t size, int mode, void *target_to_free)
 	if (mode == NEW)
 	{
 		new_ptr = malloc(size);
-		if (!new_ptr)
-			return (NULL);
 		if (!garbage_head)
 		{
 			garbage_head = new_node(new_ptr);
@@ -77,7 +74,7 @@ static void	*ezalloc_handler(size_t size, int mode, void *target_to_free)
 	else if (mode == CLEAN)
 		clean_garbage_list(garbage_head);
 	else if (mode == FREE)
-		clean_garbage_node(&garbage_head, ptr);
+		clean_garbage_node(&garbage_head, target_to_free);
 	return (NULL);
 }
 
