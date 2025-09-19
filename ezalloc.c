@@ -1,4 +1,4 @@
-#include "cantalloc.h"
+#include "ezalloc.h"
 
 static t_alloc	*new_node(void	*ptr)
 {
@@ -24,11 +24,38 @@ static void	clean_garbage_list(t_alloc *head)
 	}
 }
 
-static void	*cantalloc_handler(size_t size, int mode)
+static void	clean_garbage_node(t_alloc **head, void *target_to_free)
+{
+	t_alloc *curr;
+	t_alloc	*prev;
+
+	if (target_to_free == NULL)
+		return ;
+	curr = *head;
+	prev = NULL;
+
+	while (curr != NULL)
+	{
+		if (curr->ptr == target_to_free) 
+		{
+			if (curr == *head)
+				*head = curr->next;
+			else 
+				prev->next = curr->next;
+			free(curr->ptr);
+			free(curr);
+			return ;
+		}
+		prev = curr;
+		curr = curr->next;
+	}
+}
+
+static void	*ezalloc_handler(size_t size, int mode, void *target_to_free)
 {
 	static t_alloc	*garbage_head;
 	static t_alloc	*garbage_tail;
-	void		*new_ptr;
+	void			*new_ptr;
 
 	if (mode == NEW)
 	{
@@ -49,20 +76,22 @@ static void	*cantalloc_handler(size_t size, int mode)
 	}
 	else if (mode == CLEAN)
 		clean_garbage_list(garbage_head);
+	else if (mode == FREE)
+		clean_garbage_node(&garbage_head, ptr);
 	return (NULL);
 }
 
-void	*cantalloc(size_t size)
+void	*ezalloc(size_t size)
 {
-	return (cantalloc_handler(size, NEW));
+	return (ezalloc_handler(size, NEW, NULL));
 }
 
-void	*ccantalloc(size_t size, size_t count)
+void	*ezcalloc(size_t size, size_t count)
 {
 	char	*new_ptr;
 	size_t	i;
 
-	new_ptr = cantalloc_handler(size * count, NEW);
+	new_ptr = ezalloc_handler(size * count, NEW, NULL);
 	if (!new_ptr)
 		return (NULL);
 	i = 0;
@@ -74,7 +103,12 @@ void	*ccantalloc(size_t size, size_t count)
 	return ((void *)new_ptr);
 }
 
-void	cantalloc_clean(void)
+void	ezfree(void *ptr)
 {
-	cantalloc_handler(0, CLEAN);
+	ezalloc_handler(0, FREE, ptr);
+}
+
+void	ezcleanup(void)
+{
+	ezalloc_handler(0, CLEAN, NULL);
 }
