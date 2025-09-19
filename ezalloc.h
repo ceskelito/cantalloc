@@ -3,9 +3,13 @@
 
 # include <stdlib.h>
 
-# define NEW	0
-# define CLEAN	1
-# define FREE	2
+typedef enum e_mode
+{
+	NEW,
+	CLEAN,
+	RELEASE,
+	ADD
+} t_mode;
 
 /* garbage collector node */
 typedef struct s_alloc
@@ -24,10 +28,15 @@ void	*ezalloc(size_t size);
 ** before returning it. Returns NULL if malloc fails.*/
 void	*ezcalloc(size_t size, size_t count);
 
-/* Frees the memory of ptr, and delete the relative node from the list */
-void	ezfree(void	*ptr);
+/* Add an already allocated address at the end of the garbage list.
+ * Return the pointer we passed it. */
+void	*ez_add(void *ptr);
+
+/* Search for the pointer in the list, and frees the pointer and the node itself;
+ * after removed the node from the list */
+void	ez_free(void	*ptr);
 
 /* Frees all the memory previously allocated by ezalloc and ezcalloc. */
-void	ezcleanup(void);
+void	ez_clean(void);
 
 #endif

@@ -10,6 +10,24 @@ static t_alloc	*new_node(void	*ptr)
 	return (node);
 }
 
+static t_alloc *safe_new_node(t_alloc **head, t_alloc **tail, void *ptr)
+{
+	if (!ptr)
+		return (NULL);
+	if (!*head)
+	{
+		*head = new_node(ptr);
+		*tail = *head;
+	}
+	else
+	{
+		(*tail)->next = new_node(ptr);
+		*tail = (*tail)->next;
+	}
+	return (ptr);
+
+}
+
 static void	clean_garbage_list(t_alloc *head)
 {
 	t_alloc	*tmp;
@@ -50,7 +68,7 @@ static void	clean_garbage_node(t_alloc **head, void *target_to_free)
 	}
 }
 
-static void	*ezalloc_handler(size_t size, int mode, void *target_to_free)
+static void	*ezalloc_handler(size_t size, int mode, void *target)
 {
 	static t_alloc	*garbage_head;
 	static t_alloc	*garbage_tail;
@@ -59,22 +77,22 @@ static void	*ezalloc_handler(size_t size, int mode, void *target_to_free)
 	if (mode == NEW)
 	{
 		new_ptr = malloc(size);
-		if (!garbage_head)
-		{
-			garbage_head = new_node(new_ptr);
-			garbage_tail = garbage_head;
-		}
-		else
-		{
-			garbage_tail->next = new_node(new_ptr);
-			garbage_tail = garbage_tail->next;
-		}
+		if (!new_ptr)
+			return (NULL);
+		safe_new_node(&garbage_head, &garbage_tail, new_ptr);
 		return (new_ptr);
+	}
+	else if (mode == ADD)
+	{
+		if (!target)
+			return (NULL);
+		safe_new_node(&garbage_head, &garbage_tail, target);
+		return (target);
 	}
 	else if (mode == CLEAN)
 		clean_garbage_list(garbage_head);
-	else if (mode == FREE)
-		clean_garbage_node(&garbage_head, target_to_free);
+	else if (mode == RELEASE)
+		clean_garbage_node(&garbage_head, target);
 	return (NULL);
 }
 
@@ -100,12 +118,18 @@ void	*ezcalloc(size_t size, size_t count)
 	return ((void *)new_ptr);
 }
 
-void	ezfree(void *ptr)
+void	*ez_add(void	*ptr)
 {
-	ezalloc_handler(0, FREE, ptr);
+	ezalloc_handler(0, ADD, ptr);
+	return (ptr);
 }
 
-void	ezcleanup(void)
+void	ez_free(void *ptr)
+{
+	ezalloc_handler(0, RELEASE, ptr);
+}
+
+void	ez_clean(void)
 {
 	ezalloc_handler(0, CLEAN, NULL);
 }
