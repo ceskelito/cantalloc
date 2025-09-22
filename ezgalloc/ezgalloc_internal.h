@@ -5,11 +5,12 @@
 
 typedef enum e_mode
 {
-	NEW,
-	CLEAN,
-	RELEASE,
 	ADD,
-	CREATE
+	CLEAN_ALL,
+	CLEAN_GROUP;
+	CREATE,
+	NEW,
+	RELEASE,
 } t_mode;
 
 /* garbage collector node */
@@ -22,9 +23,10 @@ typedef struct s_alloc
 /* garbage group node */
 typedef struct s_group
 {
-    char                    *group;
-    t_alloc                 *head;
-    struct s_group  *next;
+  t_alloc         *garbage_head;
+  t_alloc         *garbage_tail;
+  char            *tag;
+  struct s_group  *next;
 } t_group;
 
 
