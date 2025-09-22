@@ -20,12 +20,12 @@ typedef struct s_alloc
 }	t_alloc;
 
 /* garbage group node */
-typedef struct s_garbage_group
+typedef struct s_group
 {
     char                    *group;
     t_alloc                 *head;
-    struct s_garbage_group  *next;
-} t_garbage_group;
+    struct s_group  *next;
+} t_group;
 
 
 /* Allocates size bytes of memory with malloc() and saves

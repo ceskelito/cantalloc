@@ -1,4 +1,4 @@
-#include "ezalloc.h"
+#include "ezgalloc_internal.h"
 
 static t_alloc	*new_node(void	*ptr)
 {
@@ -18,7 +18,7 @@ static t_alloc *safe_new_node(t_alloc **head, t_alloc **tail, void *ptr)
 	{
 		*head = new_node(ptr);
 		*tail = *head;
-		num e_mode
+	}
 	else
 	{
 		(*tail)->next = new_node(ptr);
