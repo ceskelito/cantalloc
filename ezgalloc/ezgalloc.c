@@ -1,27 +1,5 @@
-#include "ezalloc.h"
 #include "ezgalloc_internal.h"
 #include "ezgalloc.h"
-#include "stdbool.h"
-
-static char *local_strcpy(char *dest, const char *src)
-{
-    while (*src != '\0')
-    {
-        *dest = *src;
-        dest++;
-        src++;
-    }
-    *dest = '\0'; // chiude la stringa
-    return dest;
-}
-
-int local_strcmp(const char *s1, const char *s2) {
-    while (*s1 && (*s1 == *s2)) {
-        s1++;
-        s2++;
-    }
-    return *(unsigned char *)s1 - *(unsigned char *)s2;
-}
 
 /* Returns a pointer to the tag group */
 static t_group	*get_group(t_group **head, char *tag)
@@ -69,7 +47,7 @@ static void *ezg_alloc_handler(size_t size, int mode, char *tag, void *target)
 
     if (mode == CREATE)
     {
-        if (!tag || strcmp(tag, ALL_GROUPS) == 0)
+        if (!tag)
             return (NULL);
         return (safe_new_group(&groups_head));
     }
@@ -101,7 +79,7 @@ static void *ezg_alloc_handler(size_t size, int mode, char *tag, void *target)
 	return (NULL);
 }
 
-int	ezg_group_create(char *tag)
+int	ezg_create_group(char *tag)
 {
 	size_t	size;
 	void	*target;
