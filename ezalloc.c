@@ -96,12 +96,12 @@ static void	*ezalloc_handler(size_t size, int mode, void *target)
 	return (NULL);
 }
 
-void	*ezalloc(size_t size)
+void	*ez_alloc(size_t size)
 {
 	return (ezalloc_handler(size, NEW, NULL));
 }
 
-void	*ezcalloc(size_t size, size_t count)
+void	*ez_calloc(size_t size, size_t count)
 {
 	char	*new_ptr;
 	size_t	i;
