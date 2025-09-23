@@ -1,4 +1,4 @@
-#include "ezalloc.h"
+#include "ez_alloc.h"
 
 static t_alloc	*new_node(void	*ptr)
 {
@@ -68,7 +68,7 @@ static void	clean_garbage_node(t_alloc **head, void *target_to_free)
 	}
 }
 
-static void	*ezalloc_handler(size_t size, int mode, void *target)
+static void	*ez_alloc_handler(size_t size, int mode, void *target)
 {
 	static t_alloc	*garbage_head;
 	static t_alloc	*garbage_tail;
@@ -98,7 +98,7 @@ static void	*ezalloc_handler(size_t size, int mode, void *target)
 
 void	*ez_alloc(size_t size)
 {
-	return (ezalloc_handler(size, NEW, NULL));
+	return (ez_alloc_handler(size, NEW, NULL));
 }
 
 void	*ez_calloc(size_t size, size_t count)
@@ -106,7 +106,7 @@ void	*ez_calloc(size_t size, size_t count)
 	char	*new_ptr;
 	size_t	i;
 
-	new_ptr = ezalloc_handler(size * count, NEW, NULL);
+	new_ptr = ez_alloc_handler(size * count, NEW, NULL);
 	if (!new_ptr)
 		return (NULL);
 	i = 0;
@@ -120,16 +120,16 @@ void	*ez_calloc(size_t size, size_t count)
 
 void	*ez_add(void	*ptr)
 {
-	ezalloc_handler(0, ADD, ptr);
+	ez_alloc_handler(0, ADD, ptr);
 	return (ptr);
 }
 
 void	ez_free(void *ptr)
 {
-	ezalloc_handler(0, RELEASE, ptr);
+	ez_alloc_handler(0, RELEASE, ptr);
 }
 
 void	ez_clean(void)
 {
-	ezalloc_handler(0, CLEAN, NULL);
+	ez_alloc_handler(0, CLEAN, NULL);
 }
